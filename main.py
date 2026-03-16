@@ -24,17 +24,17 @@ def chat():
         AI Companion
         ========================
         """)
-    conversation_history = []
+    global_conversation_history = []
     turn_count = 0
     while True:
         user_input = input("\nYou: ")
         if user_input == "exit":
             break
         if "remember" in user_input.lower():    
-            generate_memories("\n".join(conversation_history))
+            generate_memories("\n".join(global_conversation_history))
             turn_count=0
 
-        conversation_history.append(f"User: {user_input}")
+        global_conversation_history.append(f"User: {user_input}")
 
         memories = search_memories(user_input)
         memory_text = build_memory_text(memories)
@@ -58,17 +58,18 @@ def chat():
 
         ai_reply = call_llama_stream(prompt)
 
-        conversation_history.append(f"AI: {ai_reply}")
+        global_conversation_history.append(f"AI: {ai_reply}")
 
         turn_count += 1
 
         if turn_count >= 5:
 
-            history_text = "\n".join(conversation_history)
+            last_10_messages = global_conversation_history[-10:]
+
+            history_text = "\n".join(last_10_messages)
 
             generate_memories(history_text)
 
-            conversation_history = []
             turn_count = 0
 
 

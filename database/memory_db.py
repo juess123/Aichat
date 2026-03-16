@@ -27,7 +27,6 @@ def extract_keywords(text):
     """
     从文本提取关键词
     """
-
     words = text.lower().split()
 
     keywords = []
