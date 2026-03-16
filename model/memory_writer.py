@@ -27,11 +27,16 @@ def generate_memories(conversation_text):
     - system instructions
     - descriptions about the AI
     - conversation structure
-    - things like "the conversation started"
-    - things like "you asked me"
+    - statements like "the conversation started"
+    - statements like "you asked me"
+
     Conversation:
     {conversation_text}
-    Good examples of memories:
+
+    Extract 1-3 meaningful long-term memories.
+
+    Good examples:
+
     [
     {{
     "content": "Scout wants to improve English speaking skills.",
@@ -48,15 +53,27 @@ def generate_memories(conversation_text):
     "type": "interest"
     }}
     ]
+
     Bad examples (DO NOT output):
+
     [
     "I am a memory extraction system",
     "The conversation began with a question",
     "You asked me to help"
     ]
+
     Return ONLY valid JSON.
+
+    Rules:
+    - Output must be a JSON array
+    - No explanations
+    - No text before JSON
+    - No text after JSON
+
     If no meaningful memory exists return [].
+
     Format:
+
     [
     {{
     "content": "...",
