@@ -1,6 +1,6 @@
 import json
 
-from model.embedding import encode
+from models.embedding import encode
 from database.memory_db import insert_memory, update_memory
 from core.keyword import extract_keywords
 from memory.extractor import extract_memories_with_llm
@@ -43,7 +43,7 @@ def generate_memories(conversation_text):
 
         # ===== 🔥 决策逻辑 =====
 
-        if best and similarity > 0.9:
+        if best and similarity > 0.85:
 
             print("Update memory (high similarity)")
 
@@ -54,7 +54,7 @@ def generate_memories(conversation_text):
                 emotion=m.get("emotion", "neutral")
             )
 
-        elif best and similarity > 0.75:
+        elif best and similarity > 0.7:
 
             print("Moderate similarity → decide")
 

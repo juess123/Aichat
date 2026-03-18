@@ -1,6 +1,6 @@
 import json
 import re
-from model.llama_client import call_llama
+from models.llama_client import call_llama
 
 
 def extract_memories_with_llm(conversation_text):

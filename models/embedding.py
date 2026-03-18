@@ -1,6 +1,7 @@
 # model/embedding.py
 
 from sentence_transformers import SentenceTransformer
+import config
 import os
 
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
@@ -16,7 +17,7 @@ py_logging.getLogger("sentence_transformers").setLevel(py_logging.ERROR)
 
 
 # ✅ 全局只加载一次
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer(config.MODELS)
 
 def encode(text):
     return model.encode(text).tolist()

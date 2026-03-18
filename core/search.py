@@ -2,7 +2,7 @@ import sqlite3
 import json
 import datetime
 from config import DB_PATH
-from model.embedding import encode
+from models.embedding import encode
 from database.memory_db import record_memory_access
 import numpy as np
 ALL_CONTENTS = []
@@ -14,7 +14,7 @@ ALL_CREATED = []
 ALL_PARENT = []
 ALL_UPDATED = []
 def load_memory_to_ram():
-    global ALL_CONTENTS, ALL_EMBS, ALL_IDS, ALL_IMPORTANCE, ALL_TIME, ALL_CREATED
+    global ALL_CONTENTS, ALL_EMBS, ALL_IDS, ALL_IMPORTANCE, ALL_TIME, ALL_CREATED, ALL_PARENT, ALL_UPDATED
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -55,6 +55,7 @@ def load_memory_to_ram():
     ALL_CREATED = created_ats
     ALL_PARENT = parents
     ALL_UPDATED = updateds
+
 
 def keyword_score(query, content):
     q_words = set(query.lower().split())
@@ -102,10 +103,11 @@ def compute_recency(last_accessed, created_at, last_updated):
 
     latest = max(times)
 
-    delta = (now - latest).total_seconds()
+    delta_days = (now - latest).total_seconds() / 86400
 
-    # 半衰：1天衰减
-    return 1 / (1 + delta / 86400)
+    half_life = 7   # 🔥 7天减半（你可以调）
+
+    return 0.5 ** (delta_days / half_life)
 
 
 def get_depth(idx):
@@ -157,13 +159,13 @@ def search_memory(query, top_k=5, threshold=0.5):
         k_score = keyword_score(query, content)
         depth = get_depth(idx)
         final_score = (
-            sim * 0.6 +
-            importance * 0.2 +
-            recency * 0.15 +
+            sim * 0.4 +
+            importance * 0.15 +
+            recency * 0.3 +    
             depth * 0.05 +
             k_score * 0.1
         )
-        record_memory_access(mid, increase_importance=(final_score > 0.6))
+        record_memory_access(mid, increase_importance=(final_score > 0.5))
         results.append({
             "id": mid,
             "content": content,

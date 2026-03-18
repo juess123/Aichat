@@ -27,17 +27,18 @@ def load_all_memories():
 
 
 # ===== 插入 =====
-def insert_memory(content, keywords, importance, emotion, mtype, embedding, parent_id=None):
+def insert_memory(content, keywords, importance, emotion, mtype, embedding,parent_id=None):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     now = datetime.datetime.now()
 
+
     cursor.execute("""
         INSERT INTO memory_nodes
-        (content, keywords, importance, emotion, type, embedding, parent_id, created_at, last_accessed)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (content, keywords, importance, emotion, mtype, embedding, now, now))
+        (content, keywords, importance, emotion, type, embedding, parent_id, created_at, last_accessed, last_updated)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (content, keywords, importance, emotion, mtype, embedding, parent_id, now, now, now))
 
     conn.commit()
     conn.close()

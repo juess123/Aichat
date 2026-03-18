@@ -1,7 +1,6 @@
 import requests
 import json
 from config import OLLAMA_URL,MODEL_NAME
-import subprocess
 def warmup_model():
 
     print("Warming up model...")
@@ -15,19 +14,32 @@ def warmup_model():
     requests.post(OLLAMA_URL, json=data)
     print("Model ready.")
 
+    
 def call_llama(prompt):
+    """
+    非流式调用（用于判断 / 决策）
+    """
 
-    process = subprocess.Popen(
-        ["ollama", "run", "llama3.1:8b"],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
+    data = {
+        "model": MODEL_NAME,
+        "prompt": prompt,
+        "stream": False,
+        "keep_alive": -1
+    }
 
-    output, _ = process.communicate(prompt)
+    try:
+        response = requests.post(OLLAMA_URL, json=data, timeout=10)
 
-    return output  
+        if response.status_code != 200:
+            return ""
+
+        result = response.json()
+        return result.get("response", "").strip()
+
+    except Exception as e:
+        print("LLM error:", e)
+        return ""
+
 def call_llama_stream(prompt):
 
     data = {
